@@ -29,7 +29,6 @@ except Exception as e:
     ner_model = None  # Fallback in case the NER model fails to load
 
 # Arabic lexicon for basic sentiment analysis
-
 positive_words = [
     'جيد', 'رائع', 'ممتاز', 'جميل', 'سعيد', 'مميز', 'متفائل', 'مبتهج', 'مبهر', 'مذهل',
     'عظيم', 'مشرق', 'مبدع', 'فريد', 'مستمتع', 'لطيف', 'حيوي', 'مبتكر', 'مبادر', 'موهوب',
@@ -88,7 +87,7 @@ def safe_decode(text):
         # Fix text encoding issues
         return fix_text(text)
     except Exception as e:
-        # Log the error with document ID for further inspection
+                # Log the error with document ID for further inspection
         logging.error(f"Error decoding text: {str(e)}. Text: {text[:100]}")  # Log only first 100 chars
         return text  # Return the text as is to avoid complete failure
 
@@ -164,3 +163,4 @@ def analyze_texts():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
