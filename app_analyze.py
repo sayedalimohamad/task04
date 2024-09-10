@@ -36,7 +36,7 @@ def safe_decode(text):
         logging.error(f"Error decoding text: {str(e)}. Text: {text[:100]}")
         return text
 
-def process_document(document):
+def process_document(document, idx):
     try:
         text = document.get("full_text", "")
         text = safe_decode(str(text))
@@ -50,7 +50,7 @@ def process_document(document):
             return None
 
         doc_id = document.get("_id")
-        print(f"Processing document with ID: {doc_id}")
+        print(f"Processing document {idx} with ID: {doc_id}")
 
         sentiment_scores = sia.polarity_scores(text)
         sentiment = {
@@ -109,7 +109,7 @@ def analyze_texts():
         return {"error": "Failed to fetch documents"}
 
     with ThreadPoolExecutor(max_workers=20) as executor:
-        futures = [executor.submit(process_document, doc) for doc in documents]
+        futures = [executor.submit(process_document, doc, idx) for idx, doc in enumerate(documents, start=1)]
         for future in as_completed(futures):
             result = future.result()
             if result:
