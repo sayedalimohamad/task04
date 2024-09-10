@@ -4,6 +4,7 @@ import logging
 import stanza
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from ftfy import fix_text 
 
 # Download necessary NLTK resources for sentiment analysis
 nltk.download('vader_lexicon')
