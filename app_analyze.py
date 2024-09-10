@@ -1,9 +1,32 @@
 from flask import Flask, jsonify
 from pymongo import MongoClient
-from ftfy import fix_text
-from camel_tools.tokenizers.word import simple_word_tokenize
-from camel_tools.ner import NERecognizer
 import logging
+import stanza
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+# Download necessary NLTK resources for sentiment analysis
+nltk.download('vader_lexicon')
+
+# Function to check if the model is already installed
+def ensure_model_downloaded(lang_code):
+    try:
+        # Attempt to create a pipeline to check if the model is downloaded
+        stanza.Pipeline(lang=lang_code, processors='tokenize')
+        print(f"Model for language '{lang_code}' is already downloaded.")
+    except Exception as e:
+        # If the model is not found, download it
+        print(f"Model for language '{lang_code}' not found. Downloading...")
+        stanza.download(lang_code)
+
+# Ensure the Arabic model is downloaded
+ensure_model_downloaded('ar')
+
+# Initialize the Arabic NLP pipeline for named entity recognition
+nlp = stanza.Pipeline(lang='ar', processors='tokenize,ner')
+
+# Initialize the sentiment analyzer
+sia = SentimentIntensityAnalyzer()
 
 # Setup logging
 # uncomment the following line to log errors to a file
@@ -20,74 +43,13 @@ except Exception as e:
     logging.error(f"MongoDB connection error: {str(e)}")
     raise
 
-# Initialize CAMeL NER model
-try:
-    ner_model = NERecognizer.pretrained()
-    print("CAMeL NER model loaded successfully.")
-except Exception as e:
-    logging.error(f"Error loading CAMeL NER model: {str(e)}")
-    ner_model = None  # Fallback in case the NER model fails to load
-
-# Arabic lexicon for basic sentiment analysis
-positive_words = [
-    'جيد', 'رائع', 'ممتاز', 'جميل', 'سعيد', 'مميز', 'متفائل', 'مبتهج', 'مبهر', 'مذهل',
-    'عظيم', 'مشرق', 'مبدع', 'فريد', 'مستمتع', 'لطيف', 'حيوي', 'مبتكر', 'مبادر', 'موهوب',
-    'سعيد', 'إيجابي', 'دافئ', 'صادق', 'نقي', 'ملهم', 'قوي', 'مرحب', 'مرح', 'طموح',
-    'مرن', 'جذاب', 'تفاعلي', 'محترف', 'طموح', 'بديع', 'مفعم', 'شريف', 'تقدمي', 'أصيل',
-    'مثقف', 'ناجح', 'مستقل', 'حيوي', 'أنيق', 'ملهم', 'منفتح', 'مبتسم', 'مفعم بالحيوية', 
-    'مستعد', 'مستقر', 'إبداعي', 'إيجابي', 'مبتهج', 'مشرق', 'رائع', 'مبادر', 'مستمتع',
-    'قوي', 'شجاع', 'مميز', 'مؤثر', 'متجدد', 'إيجابي', 'مبادر', 'مستقل', 'ملهم', 'مؤثر',
-    'محفز', 'مبادر', 'مفعم', 'مشرق', 'شجاع', 'ناجح', 'إيجابي', 'مفكر', 'متميز', 'أصيل',
-    'طموح', 'مبهر', 'داعم', 'مبدع', 'شريف', 'مستعد', 'مبتهج', 'مستقر', 'مرن', 'مؤثر',
-    'أنيق', 'مستمتع', 'مبتسم', 'متجدد', 'ملهم', 'مبادر', 'مميز', 'متفائل', 'مثير', 'سعيد',
-    'رائع', 'مبدع', 'قوي', 'مفعم', 'ناجح', 'مستقل', 'محترف', 'مبهر', 'مستقر', 'إيجابي',
-    'ملهم', 'شجاع', 'مبادر', 'مستعد', 'طموح', 'مبتهج', 'مشرق', 'مبدع', 'مميز', 'سعيد',
-    'ملهم', 'شريف', 'مستمتع', 'مبهر', 'قوي', 'مبادر', 'مستقل', 'متميز', 'إبداعي', 'مستقر',
-    'مرن', 'شجاع', 'ملهم', 'مبتهج', 'مستعد', 'مبادر', 'ناجح', 'طموح', 'رائع', 'مميز',
-    'قوي', 'مبهر', 'مستقل', 'مبدع', 'شريف', 'مستمتع', 'ملهم', 'مبتهج', 'مشرق', 'مثير',
-    'مستقر', 'سعيد', 'مبادر', 'مبهر', 'مبدع', 'طموح', 'مستعد', 'متميز', 'مبتهج', 'شجاع',
-    'مستقل', 'مبدع', 'مبهر', 'ملهم', 'مستعد', 'مستمتع', 'مبادر', 'سعيد', 'شريف', 'قوي',
-    'مميز', 'إبداعي', 'مبتهج', 'مستقل', 'مبادر', 'طموح', 'رائع', 'مستعد', 'مثير', 'ناجح',
-    'متميز', 'مبهر', 'مستقل', 'ملهم', 'مبتهج', 'شجاع', 'مستمتع', 'مبادر', 'مشرق', 'إيجابي'
-]
-
-negative_words = [
-    'سيء', 'كريه', 'حزين', 'بشع', 'سيئة', 'مزعج', 'مؤلم', 'ممل', 'سئم', 'غير ملائم',
-    'سلبي', 'كئيب', 'مؤسف', 'مقرف', 'مخيب', 'محبط', 'مربك', 'مخيف', 'محزن', 'مزعج',
-    'مقرف', 'غير مرغوب', 'سلبي', 'مؤلم', 'قبيح', 'مخيب', 'مزعج', 'سلبي', 'غير ملائم',
-    'محبط', 'كئيب', 'مؤسف', 'غير مرغوب', 'مزعج', 'حزين', 'محزن', 'مخيب', 'مؤلم', 'مقرف',
-    'سلبي', 'سيء', 'مزعج', 'كئيب', 'غير ملائم', 'مؤسف', 'مزعج', 'مؤلم', 'مخيب', 'محبط',
-    'مؤسف', 'محزن', 'قبيح', 'سلبي', 'مزعج', 'كئيب', 'غير مرغوب', 'مؤلم', 'مقرف', 'سيء',
-    'محبط', 'مؤسف', 'مزعج', 'غير ملائم', 'مقرف', 'حزين', 'مؤلم', 'سلبي', 'مخيب', 'مزعج',
-    'كئيب', 'مؤسف', 'مخيف', 'غير مرغوب', 'مقرف', 'مزعج', 'محبط', 'سيء', 'سلبي', 'كئيب',
-    'محزن', 'مزعج', 'مؤلم', 'محبط', 'قبيح', 'مؤسف', 'مخيب', 'غير مرغوب', 'سيء', 'مزعج',
-    'مؤلم', 'مخيف', 'مزعج', 'محزن', 'سلبي', 'محبط', 'مقرف', 'سيء', 'كئيب', 'غير ملائم',
-    'محزن', 'مزعج', 'مؤلم', 'مقرف', 'سيء', 'مخيب', 'كئيب', 'مؤسف', 'سلبي', 'مزعج'
-]
-
-def basic_sentiment_analysis(text):
-    """Simple lexicon-based sentiment analysis."""
-    tokens = simple_word_tokenize(text)
-    score = 0
-    for word in tokens:
-        if word in positive_words:
-            score += 1
-        elif word in negative_words:
-            score -= 1
-    if score > 0:
-        return {'label': 'POSITIVE', 'score': score}
-    elif score < 0:
-        return {'label': 'NEGATIVE', 'score': score}
-    else:
-        return {'label': 'NEUTRAL', 'score': score}
-
 def safe_decode(text):
     """Attempt to fix and decode text into UTF-8 safely."""
     try:
         # Fix text encoding issues
         return fix_text(text)
     except Exception as e:
-                # Log the error with document ID for further inspection
+        # Log the error with document ID for further inspection
         logging.error(f"Error decoding text: {str(e)}. Text: {text[:100]}")  # Log only first 100 chars
         return text  # Return the text as is to avoid complete failure
 
@@ -114,24 +76,24 @@ def analyze_texts():
             doc_id = document.get("_id")
             print(f"Processing document with ID: {doc_id}")
     
-            # Simple lexicon-based sentiment analysis
-            sentiment = basic_sentiment_analysis(text)
+            # Perform sentiment analysis using VADER
+            sentiment_scores = sia.polarity_scores(text)
+            sentiment = {
+                'label': 'POSITIVE' if sentiment_scores['compound'] > 0 else 'NEGATIVE' if sentiment_scores['compound'] < 0 else 'NEUTRAL',
+                'score': sentiment_scores['compound']
+            }
 
-            # NER using CAMeL model
-            if ner_model:
-                tokenized_text = simple_word_tokenize(text)
-                ner_results = ner_model.predict_sentence(tokenized_text)
-            else:
-                ner_results = []  # Fallback if NER model failed to load
-
+            # NER using Stanza
+            doc = nlp(text)
             entities = []
-            for entity in ner_results:
-                entities.append({
-                    "word": entity.get('word', ''),
-                    "entity": entity.get('entity', ''),
-                    "start": entity.get('start', 0),
-                    "end": entity.get('end', 0)
-                })
+            for sentence in doc.sentences:
+                for entity in sentence.ents:
+                    entities.append({
+                        "word": entity.text,
+                        "entity": entity.type,
+                        "start": entity.start_char,
+                        "end": entity.end_char
+                    })
     
             update_data = {
                 "sentiment": sentiment,
@@ -163,4 +125,3 @@ def analyze_texts():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
