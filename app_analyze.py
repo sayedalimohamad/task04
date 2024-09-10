@@ -103,12 +103,12 @@ def process_document(document, idx):
 def analyze_texts():
     results = []
     try:
-        documents = list(collection.find({}))
+        documents = list(collection.find({}, {"_id": 1, "full_text": 1, "sentiment": 1, "entities": 1}))
     except Exception as e:
         logging.error(f"Error fetching documents from MongoDB: {str(e)}")
         return {"error": "Failed to fetch documents"}
 
-    with ThreadPoolExecutor(max_workers=20) as executor:
+    with ThreadPoolExecutor(max_workers=50) as executor:
         futures = [executor.submit(process_document, doc, idx) for idx, doc in enumerate(documents, start=1)]
         for future in as_completed(futures):
             result = future.result()
