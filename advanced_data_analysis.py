@@ -82,7 +82,7 @@ def process_document(document, idx):
             )
 
             if update_result.modified_count > 0:
-                print(f"Update result: {update_result.modified_count} document(s) updated.")
+                print(f"Updating is successful for document {doc_id}.")
                 return {
                     "post_id": document.get("post_id"),
                     "sentiment": sentiment,
