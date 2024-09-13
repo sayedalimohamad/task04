@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %}Home Page{% endblock %} {% block
+content %}
+<!-- Aside on the left -->
+<aside class="aside">
+  <nav class="nav flex-column" style="background-color: #3d3d3d">
+    <a class="nav-link" aria-current="page" href="/">
+      <i class="fa-solid fa-house"></i> Home Page</a
+    >
+    <a class="nav-link" aria-current="page" href="gui.html">
+      <i class="fa-solid fa-folder-tree"></i> Analysis</a
+    >
+    <a
+      class="nav-link active"
+      aria-current="page"
+      href="advanced.html"
+      style="transform: scale(1.2)"
+    >
+      <i class="fa-solid fa-flask-vial"></i> Advanced Analysis</a
+    >
+    <ul class="nav flex-column ms-3">
+      <li><a class="nav-link" href="#section1">Sub Analysis 1</a></li>
+      <li><a class="nav-link" href="#section2">Sub Analysis 2</a></li>
+      <li><a class="nav-link" href="#section3">Sub Analysis 3</a></li>
+    </ul>
+  </nav>
+</aside>
+<div class="container"></div>
+{% endblock %}

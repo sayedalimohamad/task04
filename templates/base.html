@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}My Page{% endblock %}</title>
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/locales/de_DE.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/germanyLow.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/fonts/notosans-sc.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/wc.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/radar.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    {% block head %}{% endblock %}
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+
+  <body>
+   
+    {% block content %} {% endblock %}
+
+    <footer>
+      <p>
+        2024 Al Maaref University ,task 02 | Mohamad Sayed Ali | ID: 10119295
+      </p>
+    </footer>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          // Attach a click event listener to all anchor links with href starting with #
+          document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+              anchor.addEventListener('click', function(event) {
+                  event.preventDefault(); // Prevent the default anchor behavior
+                  
+                  // Get the target element
+                  const targetId = this.getAttribute('href').substring(1);
+                  const targetElement = document.getElementById(targetId);
+      
+                  if (targetElement) {
+                      // Calculate the position of the target element
+                      const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                      const offset = 80; 
+                      const offsetPosition = targetPosition - offset;
+      
+                      // Scroll to the calculated position
+                      window.scrollTo({
+                          top: offsetPosition,
+                          behavior: "smooth" // Smooth scrolling effect
+                      });
+                  }
+              });
+          });
+      });
+      </script>
+    
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/wc.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+    <script src="/static/js/all_authors.js"></script>
+    <script src="/static/js/articles_by_date.js"></script>
+    <script src="/static/js/articles_by_keyword.js"></script>
+    <script src="/static/js/articles_by_language.js"></script>
+    <script src="/static/js/articles_by_word_count.js"></script>
+    <script src="/static/js/recent_articles.js"></script>
+    <script src="/static/js/top_authors.js"></script>
+    <script src="/static/js/top_classes.js"></script>
+    <script src="/static/js/top_keywords.js"></script>
+    <script src="/static/js/longest_articles.js"></script>
+    <script src="/static/js/shortest_articles.js"></script>
+    <script src="/static/js/articles_by_language_on_web.js"></script>
+    <script src="/static/js/articles_by_word_count_range.js"></script>
+    <script src="/static/js/carousel_articles.js"></script>
+    <script src="/static/js/top_classes_tag_cloud.js"></script>
+  </body>
+</html>

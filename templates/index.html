@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block title %}Home Page{% endblock %} {% block
+content %}
+ <!-- Aside on the left -->
+ <aside class="aside">
+  <nav class="nav flex-column" style="background-color: #3d3d3d;">
+    <a class="nav-link active" aria-current="page" href="/" style="transform: scale(1.2);"> <i class="fa-solid fa-house"></i> Home Page</a>
+    <a class="nav-link" aria-current="page" href="gui.html"> <i class="fa-solid fa-folder-tree"></i> Analysis</a>
+    <a class="nav-link" aria-current="page" href="advanced.html"> <i class="fa-solid fa-flask-vial"></i> Advanced Analysis</a>
+    </nav>
+</aside>
+
+<header>
+  <h1>Welcome To Home Page</h1>
+  <p>Here you can find the most routing that you can use in this project</p>
+</header>
+<nav>
+  <h1>Most routing</h1>
+  <div class="route-lists">
+    {% set half = routes|length // 2 %}
+    <ul>
+      {% for rule in routes[3:(half+2)] %}
+      <li>{{ rule }}</li>
+      {% endfor %}
+    </ul>
+    <ul>
+      {% for rule in routes[(half+2):] %}
+      <li>{{ rule }}</li>
+      {% endfor %}
+    </ul>
+    <!-- <ul id="focus-ul">
+      <li>The GUI Page</li>
+      <li>
+        <button class="button-new" onclick="window.location.href='/gui.html'" >Go & See</button>
+      </li>
+    </ul> -->
+  </div>
+</nav>
+<main>
+  <div id="content-display">
+    <h1>Note:</h1>
+    <h2>Yo can use http://127.0.0.1:5000/<span id="red">{route-name}</span></h2>
+    <br />
+    <h3>
+      Example: http://127.0.0.1:5000/<span id="red">top_authors</span>
+      <button class="button-new">
+        <a href="http://127.0.0.1:5000/top_authors">Try Now</a>
+      </button>
+    </h3>
+  </div>
+</main>
+{% endblock %}
