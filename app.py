@@ -624,7 +624,7 @@ def most_updated_articles():
 def sentiment_count():
     pipeline = [
         {"$group": {"_id": "$sentiment", "count": {"$sum": 1}}},
-        {"$sort": {"count": -1}},
+        {"$sort": {"count": -1, "sentiment.score": -1}},
     ]
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)

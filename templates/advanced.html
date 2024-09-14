@@ -19,14 +19,15 @@ content %}
     >
     <ul class="nav flex-column ms-3">
       <li><a class="nav-link" href="#average_sentiment_by_date">Average Sentiment</a></li>
-      <li><a class="nav-link" href="#section2">Sub Analysis 2</a></li>
+      <li><a class="nav-link" href="#sentiment_by_count">Sentiment by Count</a></li>
       <li><a class="nav-link" href="#section3">Sub Analysis 3</a></li>
     </ul>
   </nav>
 </aside>
 
 <div class="container">
-  <div class="row mb-4"></div>
+  
+  <div class="row mb-4">
     <!-- Average Sentiment by Date -->
     <div class="col-lg-12 col-md-12 col-sm-12">
       <div class="card card-modern bg-light text-dark">
@@ -39,5 +40,18 @@ content %}
       </div>
     </div>
   </div>
+
+  <div class="row mb-4">
+    <!-- Sentiment by count -->
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="card card-modern bg-light text-dark">
+        <div class="card-body">
+          <h1 class="card-title">Sentiment by Count</h1>
+          <div id="sentiment_by_count" class="charts-section"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
