@@ -630,16 +630,39 @@ def sentiment_count():
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
 
-@app.route("/all_sentiment", methods=["GET"])
-def all_sentiment():
+@app.route("/average_sentiment_by_date", methods=["GET"])
+def average_sentiment_by_date():
     pipeline = [
-        # {"$group": {"_id": "$sentiment", "author": {"$addToSet": "$author"}, "title": {"$addToSet": "$title"},"last_updated": {"$addToSet": "$last_updated"}}},
-        # {"$sort": {"_id": 1}},
+    {
+        '$project': {
+            'sentiment_score': '$sentiment.score', 
+            'published_day': {
+                '$substr': [
+                    '$published_time', 0, 10
+                ]
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$published_day', 
+            'average_sentiment_score': {
+                '$avg': '$sentiment_score'
+            },
+            'count': {
+                '$sum': 1
+            }
+        }
+    }, {
+        '$sort': {
+            '_id': 1
+        }
+    }
+]
 
-    ]
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
+
 
 
 if __name__ == "__main__":
