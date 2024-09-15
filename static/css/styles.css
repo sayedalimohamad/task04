@@ -386,3 +386,6 @@ ul.nav li a:hover{
 ul.nav li a:focus{
   color: #3ae374;
 }
+ul.nav {
+  border-left: 4px solid #28a745;
+}
