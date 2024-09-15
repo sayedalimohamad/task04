@@ -22,6 +22,7 @@ fetch("/entities_by_type")
         })
       );
       series.slices.template.setAll({
+        tooltipText: "{category}: {value}",
         strokeWidth: 3,
         stroke: am5.color(0xffffff),
       });
