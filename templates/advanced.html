@@ -20,6 +20,8 @@ content %}
     <ul class="nav flex-column ms-3">
       <li><a class="nav-link" href="#average_sentiment_by_date">Average Sentiment</a></li>
       <li><a class="nav-link" href="#sentiment_by_count">Sentiment by Count</a></li>
+      <li><a class="nav-link" href="#entities_by_type">Entities by Type</a></li>
+      <li><a class="nav-link" href="#entities_by_trending">Entities by Trending</a></li>
       <li><a class="nav-link" href="#section3">Sub Analysis 3</a></li>
     </ul>
   </nav>
@@ -46,13 +48,47 @@ content %}
     <div class="col-lg-12 col-md-12 col-sm-12">
       <div class="card card-modern bg-light text-dark">
         <div class="card-body">
-          <h1 class="card-title">Sentiment by Score Count </h1>
+          <div class="d-flex justify-content-between align-items-center">
+            <h1 class="card-title mb-0">Sentiment by Score Count</h1>
+            <div class="form-check">
+              <label class="form-check-label me-2" for="hideOutliers">Hide Outliers</label>
+              <input class="form-check-input" type="checkbox" id="hideOutliers" />
+            </div>
+          </div>
+          <br>
           <div id="sentiment_by_count" class="charts-section"></div>
+          <p class="card-text m-4"> The above hide outliers checkbox is designed to hide the outliers in the graph. Outliers are the data points that are far from the rest of the data points. </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="row mb-4">
+    <!-- Entities Count by Entity Type  -->
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="card card-modern bg-light text-dark">
+        <div class="card-body">
+          <h1 class="card-title">Entities Count by Entity Type </h1>
+          <div id="entities_by_type" class="charts-section"></div>
         </div>
       </div>
     </div>
   </div>
 
+  <div class="row mb-4">
+    <!-- Entities by Trending  -->
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="card card-modern bg-light text-dark">
+        <div class="card-body">
+          <h1 class="card-title">Entities by Trending</h1>
+          <div id="entities_by_trending" class="charts-section"></div>
+          <p class="card-text m-4"> This graph shows the entities that are trending in the articles. The entities are the people, places, and things that are mentioned in the articles.
+            Each entity is assigned a score based on how many times it is mentioned in the articles, and it has a checkbox to it from the graph.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

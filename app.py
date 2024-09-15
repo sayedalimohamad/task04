@@ -663,7 +663,57 @@ def average_sentiment_by_date():
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
 
+@app.route("/entities_by_type", methods=["GET"])
+def entities_by_type():
+    pipeline = [
+        {
+        '$unwind': '$entities'
+    }, {
+        '$group': {
+            '_id': '$entities.entity', 
+            'count': {
+                '$sum': 1
+            }
+        }
+    }
+    ]
+    result = list(collection.aggregate(pipeline))
+    json_result = json.dumps(result, ensure_ascii=False, indent=4)
+    return Response(json_result, content_type="application/json; charset=utf-8"), 200
 
+@app.route("/entities_by_trending", methods=["GET"])
+def entities_by_trending():
+    pipeline = [
+       {
+        '$unwind': '$entities'
+    }, {
+        '$group': {
+            '_id': {
+                'word': '$entities.word', 
+                'entity': '$entities.entity'
+            }, 
+            'count': {
+                '$sum': 1
+            }
+        }
+    }, {
+        '$sort': {
+            'count': -1
+        }
+    }, {
+        '$limit': 10
+    }, {
+        '$project': {
+            '_id': 0, 
+            'word': '$_id.word', 
+            'type': '$_id.entity', 
+            'count': 1
+        }
+    }
+    ]
+    result = list(collection.aggregate(pipeline))
+    json_result = json.dumps(result, ensure_ascii=False, indent=4)
+    return Response(json_result, content_type="application/json; charset=utf-8"), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
