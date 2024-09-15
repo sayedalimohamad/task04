@@ -7,6 +7,7 @@ fetch("/average_sentiment_by_date")
       label: item.average_sentiment_score > 0 ? "POSITIVE" : item.average_sentiment_score < 0 ? "NEGATIVE" : "NEUTRAL",
       count: item.count,
     }));
+    processedData.sort((a, b) => a.score - b.score);
     am5.ready(function () {
       var root = am5.Root.new("average_sentiment_by_date");
       root.setThemes([am5themes_Animated.new(root)]);
