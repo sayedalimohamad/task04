@@ -5,7 +5,6 @@ fetch("/entities_by_trending")
       value: item.count,
       category: item.word + " - " + item.type + " ",
     }));
-    console.log(processedData);
     am5.ready(function () {
       var root = am5.Root.new("entities_by_trending");
       root.setThemes([am5themes_Animated.new(root)]);

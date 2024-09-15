@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import datetime, json
 from bson import ObjectId
 
+
 app = Flask(__name__)
 
 
@@ -714,6 +715,95 @@ def entities_by_trending():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
+
+# Function to convert ObjectId to string
+def convert_objectid_to_str(obj):
+    if isinstance(obj, ObjectId):
+        return str(obj)
+    elif isinstance(obj, dict):
+        return {k: convert_objectid_to_str(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_objectid_to_str(item) for item in obj]
+    else:
+        return obj
+
+@app.route("/most_positive_sentiment", methods=["GET"])
+def most_positive_sentiment():
+    pipeline = [
+        {
+            '$match': {
+                'sentiment.score': {
+                    '$gt': 0, 
+                    '$lte': 1
+                }
+            }
+        },
+        {
+            '$sort': {
+                'sentiment.score': -1
+            }
+        },
+        {
+            '$limit': 50
+        },
+        {
+            '$project': {
+                'title': 1, 
+                'author': 1, 
+                'sentiment.label': 1, 
+                'sentiment.score': 1,
+                "post_id": 1
+            }
+        }
+    ]
+    
+    try:
+        result = list(collection.aggregate(pipeline))
+        # Convert ObjectId fields to strings
+        result = [convert_objectid_to_str(doc) for doc in result]
+        json_result = json.dumps(result, ensure_ascii=False, indent=4)
+        return Response(json_result, content_type="application/json; charset=utf-8"), 200
+    except Exception as e:
+        return Response(str(e), content_type="text/plain; charset=utf-8"), 500
+
+@app.route("/most_negative_sentiment", methods=["GET"])
+def most_negative_sentiment():
+    pipeline = [
+        {
+            '$match': {
+                'sentiment.score': {
+                    '$lt': 0, 
+                    '$gte': -1
+                }
+            }
+        },
+        {
+            '$sort': {
+                'sentiment.score': 1
+            }
+        },
+        {
+            '$limit': 50
+        },
+        {
+            '$project': {
+                'title': 1, 
+                'author': 1, 
+                'sentiment.label': 1, 
+                'sentiment.score': 1,
+                "post_id": 1
+            }
+        }
+    ]
+    
+    try:
+        result = list(collection.aggregate(pipeline))
+        # Convert ObjectId fields to strings
+        result = [convert_objectid_to_str(doc) for doc in result]
+        json_result = json.dumps(result, ensure_ascii=False, indent=4)
+        return Response(json_result, content_type="application/json; charset=utf-8"), 200
+    except Exception as e:
+        return Response(str(e), content_type="text/plain; charset=utf-8"), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
