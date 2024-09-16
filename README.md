@@ -194,3 +194,8 @@ Errors and important events are logged using Python's logging module.
 ### Example Output
 
 The script prints the results of the analysis to the console.
+
+## A `000_Notice.md` is in the directory of data, and should be reads.
+
+``` The JSON database backup is divided into 28 chunk files of 1000 each. Use 'mergeJSONfile.py' to rejoin them and `data_storage.py` to connect to MongoDB. Be sure to review the restrictions in the `000_Notice.md` file located in the data directory. ```
+
