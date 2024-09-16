@@ -204,4 +204,4 @@ The script prints the results of the analysis to the console.
 ---
 # The Image
 ## Login Page
-![Admin should enter username and password to access the page.](../127.0.0.1_5000_login(HD%20Screen%20-%20MSA).png)
+![Admin should enter username and password to access the page.](/README%20Images/127.0.0.1_5000_login(HD%20Screen%20-%20MSA).png)
