@@ -124,7 +124,7 @@ This application provides a comprehensive set of endpoints for querying and anal
 2. Run the script:
 
     ```sh
-    python app_analyze.py
+    python advanced_data_analysis.py
     ```
 
 ### Configuration
