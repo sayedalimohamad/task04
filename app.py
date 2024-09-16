@@ -1,34 +1,60 @@
-from flask import Flask, jsonify, request, Response, render_template
+from flask import Flask, jsonify, request, Response, render_template,redirect, url_for, flash
 from pymongo import MongoClient
 import datetime, json
 from bson import ObjectId
-
-
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 app = Flask(__name__)
-
-
 client = MongoClient("mongodb://localhost:27017/")
 db = client["almayadeen"]
 collection = db["articles"]
-
-@app.errorhandler(404)
-def error_404(error):
-    return render_template("404.html"), 404
-
-@app.route("/", methods=["GET"])
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+ADMIN_USERNAME = 'admin'
+ADMIN_PASSWORD = 'password'
+class User(UserMixin):
+    """Simple User class with an ID"""
+    def __init__(self, id):
+        self.id = id
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            user = User(id=1)  
+            login_user(user)   
+            flash('Logged in successfully.')
+            return redirect(url_for('home'))
+        else:
+            flash('Invalid username or password. Please try again.')
+            return redirect(url_for('login'))
+    return render_template('login.html')
+@app.route("/")
+@login_required
 def home():
     routes = [str(rule) for rule in app.url_map.iter_rules()]
     return render_template("index.html", routes=routes), 200
-
-
+@app.errorhandler(404)
+def error_404(error):
+    return render_template("404.html"), 404
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('login'))
 @app.route("/gui.html", methods=["GET"])
 def gui_page():
     return render_template("gui.html"), 200
-
 @app.route("/advanced.html", methods=["GET"])
 def advanced_page():
     return render_template("advanced.html"), 200
-
 @app.route("/top_keywords", methods=["GET"])
 def top_keywords():
     pipeline = [
@@ -39,9 +65,6 @@ def top_keywords():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/top_authors", methods=["GET"])
 def top_authors():
     pipeline = [
@@ -52,9 +75,6 @@ def top_authors():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/all_authors", methods=["GET"])
 def all_authors():
     pipeline = [
@@ -64,9 +84,6 @@ def all_authors():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_date", methods=["GET"])
 def articles_by_date():
     pipeline = [
@@ -86,9 +103,6 @@ def articles_by_date():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_word_count", methods=["GET"])
 def articles_by_word_count():
     pipeline = [
@@ -99,9 +113,6 @@ def articles_by_word_count():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_language", methods=["GET"])
 def articles_by_language():
     pipeline = [
@@ -111,9 +122,6 @@ def articles_by_language():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_classes", methods=["GET"])
 def articles_by_classes():
     pipeline = [
@@ -123,9 +131,6 @@ def articles_by_classes():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/recent_articles", methods=["GET"])
 def recent_articles():
     pipeline = [
@@ -134,19 +139,13 @@ def recent_articles():
         {"$limit": 20},
     ]
     result = list(collection.aggregate(pipeline))
-
     for doc in result:
         if "_id" in doc and isinstance(doc["_id"], ObjectId):
             doc["_id"] = str(doc["_id"])
-
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_keyword/<keyword>", methods=["GET"])
 def articles_by_keyword(keyword):
-    
     pipeline_keyword_count = [
         {
             "$match": {
@@ -158,27 +157,17 @@ def articles_by_keyword(keyword):
         },
         {"$count": "keywordCount"},
     ]
-
-    
     pipeline_total_count = [{"$count": "totalSize"}]
-
-    
     keyword_count_result = list(collection.aggregate(pipeline_keyword_count))
     total_count_result = list(collection.aggregate(pipeline_total_count))
-
-    
     result = {
         "keywordCount": (
             keyword_count_result[0]["keywordCount"] if keyword_count_result else 0
         ),
         "totalSize": total_count_result[0]["totalSize"] if total_count_result else 0,
     }
-
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_author/<author_name>", methods=["GET"])
 def articles_by_author(author_name):
     pipeline = [
@@ -196,9 +185,6 @@ def articles_by_author(author_name):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/top_classes", methods=["GET"])
 def top_classes():
     pipeline = [
@@ -209,9 +195,6 @@ def top_classes():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/article_details/<postid>", methods=["GET"])
 def article_details(postid):
     pipeline = [
@@ -238,9 +221,6 @@ def article_details(postid):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_with_video", methods=["GET"])
 def articles_with_video():
     pipeline = [
@@ -250,9 +230,6 @@ def articles_with_video():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_year/<year>", methods=["GET"])
 def articles_by_year(year):
     pipeline = [
@@ -263,9 +240,6 @@ def articles_by_year(year):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/longest_articles", methods=["GET"])
 def longest_articles():
     pipeline = [
@@ -304,13 +278,9 @@ def longest_articles():
         {"$sort": {"word_count": -1}},
         {"$limit": 50},
     ]
-
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/shortest_articles", methods=["GET"])
 def shortest_articles():
     pipeline = [
@@ -350,13 +320,9 @@ def shortest_articles():
         {"$sort": {"word_count": 1}},
         {"$limit": 50},
     ]
-
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_keyword_count", methods=["GET"])
 def articles_by_keyword_count():
     pipeline = [
@@ -369,9 +335,6 @@ def articles_by_keyword_count():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_with_thumbnail", methods=["GET"])
 def articles_with_thumbnail():
     pipeline = [
@@ -381,9 +344,6 @@ def articles_with_thumbnail():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_updated_after_publication", methods=["GET"])
 def articles_updated_after_publication():
     pipeline = [
@@ -393,8 +353,6 @@ def articles_updated_after_publication():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
 @app.route("/articles_by_coverage/<coverage>", methods=["GET"])
 def articles_by_coverage(coverage):
     pipeline = [
@@ -413,12 +371,8 @@ def articles_by_coverage(coverage):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/popular_keywords_last_<int:x>_days", methods=["GET"])
 def popular_keywords_last_X_days(x):
-    
     try:
         days = int(x)
     except ValueError:
@@ -429,7 +383,6 @@ def popular_keywords_last_X_days(x):
             content_type="application/json; charset=utf-8",
             status=400,
         )
-
     pipeline = [
         {
             "$match": {
@@ -443,13 +396,9 @@ def popular_keywords_last_X_days(x):
         {"$sort": {"count": -1}},
         {"$limit": 10},
     ]
-
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_month/<year>/<month>", methods=["GET"])
 def articles_by_month(year, month):
     if len(month) == 1:
@@ -462,9 +411,6 @@ def articles_by_month(year, month):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_word_count_range/<int:min>/<int:max>", methods=["GET"])
 def articles_by_word_count_range(min, max):
     pipeline = [
@@ -483,14 +429,9 @@ def articles_by_word_count_range(min, max):
             "$sort": {"word_count": 1}
         },  
     ]
-
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
-
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_with_specific_keyword_count/<int:count>", methods=["GET"])
 def articles_with_specific_keyword_count(count):
     pipeline = [
@@ -500,9 +441,6 @@ def articles_with_specific_keyword_count(count):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_specific_date/<date>", methods=["GET"])
 def articles_by_specific_date(date):
     pipeline = [
@@ -512,9 +450,6 @@ def articles_by_specific_date(date):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_containing_text/<text>", methods=["GET"])
 def articles_containing_text(text):
     pipeline = [
@@ -524,9 +459,6 @@ def articles_containing_text(text):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_with_more_than/<int:word_count>", methods=["GET"])
 def articles_with_more_than(word_count):
     pipeline = [
@@ -537,9 +469,6 @@ def articles_with_more_than(word_count):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_grouped_by_coverage", methods=["GET"])
 def articles_grouped_by_coverage():
     pipeline = [
@@ -550,9 +479,6 @@ def articles_grouped_by_coverage():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_last_<int:x>_hours", methods=["GET"])
 def articles_last_x_hours(x):
     pipeline = [
@@ -568,9 +494,6 @@ def articles_last_x_hours(x):
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/articles_by_title_length", methods=["GET"])
 def articles_by_title_length():
     pipeline = [
@@ -587,9 +510,6 @@ def articles_by_title_length():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-
-
 @app.route("/most_updated_articles", methods=["GET"])
 def most_updated_articles():
     pipeline = [
@@ -618,9 +538,6 @@ def most_updated_articles():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-# new route section for advanced analysis
-
 @app.route("/sentiment_by_count", methods=["GET"])
 def sentiment_count():
     pipeline = [
@@ -630,7 +547,6 @@ def sentiment_count():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
 @app.route("/average_sentiment_by_date", methods=["GET"])
 def average_sentiment_by_date():
     pipeline = [
@@ -659,11 +575,9 @@ def average_sentiment_by_date():
         }
     }
 ]
-
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
 @app.route("/entities_by_type", methods=["GET"])
 def entities_by_type():
     pipeline = [
@@ -681,7 +595,6 @@ def entities_by_type():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
 @app.route("/entities_by_trending", methods=["GET"])
 def entities_by_trending():
     pipeline = [
@@ -715,8 +628,6 @@ def entities_by_trending():
     result = list(collection.aggregate(pipeline))
     json_result = json.dumps(result, ensure_ascii=False, indent=4)
     return Response(json_result, content_type="application/json; charset=utf-8"), 200
-
-# Function to convert ObjectId to string
 def convert_objectid_to_str(obj):
     if isinstance(obj, ObjectId):
         return str(obj)
@@ -726,7 +637,6 @@ def convert_objectid_to_str(obj):
         return [convert_objectid_to_str(item) for item in obj]
     else:
         return obj
-
 @app.route("/most_positive_sentiment", methods=["GET"])
 def most_positive_sentiment():
     pipeline = [
@@ -756,16 +666,13 @@ def most_positive_sentiment():
             }
         }
     ]
-    
     try:
         result = list(collection.aggregate(pipeline))
-        # Convert ObjectId fields to strings
         result = [convert_objectid_to_str(doc) for doc in result]
         json_result = json.dumps(result, ensure_ascii=False, indent=4)
         return Response(json_result, content_type="application/json; charset=utf-8"), 200
     except Exception as e:
         return Response(str(e), content_type="text/plain; charset=utf-8"), 500
-
 @app.route("/most_negative_sentiment", methods=["GET"])
 def most_negative_sentiment():
     pipeline = [
@@ -795,15 +702,38 @@ def most_negative_sentiment():
             }
         }
     ]
-    
     try:
         result = list(collection.aggregate(pipeline))
-        # Convert ObjectId fields to strings
         result = [convert_objectid_to_str(doc) for doc in result]
         json_result = json.dumps(result, ensure_ascii=False, indent=4)
         return Response(json_result, content_type="application/json; charset=utf-8"), 200
     except Exception as e:
         return Response(str(e), content_type="text/plain; charset=utf-8"), 500
+    
+@app.route("/entities_tag_cloud", methods=["GET"])
+def entities_tag_cloud():
+    pipeline = [
+    {
+        '$unwind': '$entities'
+    }, {
+        '$group': {
+            '_id': '$entities.word', 
+            'count': {
+                '$sum': 1
+            }
+        }
+    }, {
+        '$sort': {
+            'count': -1
+        }
+    },
+    {
+        '$limit': 200
+    }
+]
+    result = list(collection.aggregate(pipeline))
+    json_result = json.dumps(result, ensure_ascii=False, indent=4)
+    return Response(json_result, content_type="application/json; charset=utf-8"), 200
 
 if __name__ == "__main__":
     app.run(debug=True)

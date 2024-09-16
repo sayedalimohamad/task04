@@ -1,13 +1,14 @@
-# Flask Web Application with MongoDB
+# Flask Web Application with MongoDB AND `Authentication`
 
 This code is a Flask web application that interacts with a MongoDB database to provide various endpoints for querying and analyzing articles. Here's a breakdown of the key components and routes:
 
 ## Imports and Initialization
 
-- `Flask`, `jsonify`, `request`, `Response`, and `render_template` are imported from `flask`.
+- `Flask`, `jsonify`, `request`, `Response`, `render_template`, `redirect`, `url_for`, and `flash` are imported from `flask`.
 - `MongoClient` is imported from `pymongo` to interact with MongoDB.
 - `datetime` and `json` are standard Python libraries.
 - `ObjectId` is imported from `bson` to handle MongoDB ObjectIds.
+- `LoginManager`, `UserMixin`, `login_user`, `login_required`, and `logout_user` are imported from `flask_login` for user authentication.
 - The Flask app is initialized, and a MongoDB client is created to connect to a local MongoDB instance.
 
 ## Error Handling
@@ -15,6 +16,16 @@ This code is a Flask web application that interacts with a MongoDB database to p
 - A custom 404 error handler is defined to render a `404.html` template.
 
 ## Routes
+
+### Authentication
+
+- `/login`: Handles user login.
+- `/logout`: Logs out the user.
+
+#### 📌 Note: Admin Credentials
+- For now, the admin credentials are hardcoded:
+    - `ADMIN_USERNAME` = 'admin'
+    - `ADMIN_PASSWORD` = 'password'
 
 ### Home and Static Pages
 
@@ -61,6 +72,7 @@ This code is a Flask web application that interacts with a MongoDB database to p
 - `/average_sentiment_by_date`: Calculates the average sentiment score by date.
 - `/entities_by_type`: Groups entities by type.
 - `/entities_by_trending`: Returns the top 10 trending entities.
+- `/entities_tag_cloud`: Returns the top 200 trending entities as tag cloud design.
 - `/most_positive_sentiment`: Returns the 50 articles with the most positive sentiment.
 - `/most_negative_sentiment`: Returns the 50 articles with the most negative sentiment.
 
@@ -96,6 +108,7 @@ This application provides a comprehensive set of endpoints for querying and anal
     - `stanza==1.8.2`
     - `nltk==3.9.1`
     - `ftfy==6.2.3`
+    - `flask_login==0.6.2`
 
 ### Installation
 

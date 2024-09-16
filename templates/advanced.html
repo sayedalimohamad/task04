@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Home Page{% endblock %} {% block
+{% extends "base.html" %} {% block title %}Advanced Analysis{% endblock %} {% block
 content %}
 <!-- Aside on the left -->
 <aside class="aside">
@@ -26,7 +26,11 @@ content %}
       <li>
         <a class="nav-link" href="#entities_by_trending">Entities by Trending</a>
       </li>
+      <li>
+        <a class="nav-link" href="#entities_tag_cloud">Entities Tag Cloud</a>
+      </li>
     </ul>
+    <a href="{{ url_for('logout') }}" class="btn btn-md btn-dark logout-button"><i class="fa-solid fa-right-from-bracket"></i> Log out</a>
   </nav>
 </aside>
 
@@ -119,7 +123,7 @@ content %}
     <div class="col-lg-12 col-md-12 col-sm-12">
       <div class="card card-modern bg-light text-dark">
         <div class="card-body">
-          <h1 class="card-title">Entities by Trending</h1>
+          <h1 class="card-title">Entities by Trending - Top 10</h1>
           <div id="entities_by_trending" class="charts-section"></div>
           <p class="card-text m-4">
             This graph shows the entities that are trending in the articles. The
@@ -132,6 +136,23 @@ content %}
       </div>
     </div>
   </div>
+
+  <div class="row mb-4">
+    <!-- Entities Tag Cloud  -->
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="card card-modern bg-light text-dark">
+        <div class="card-body">
+          <h1 class="card-title">Entities Tag Cloud - Limited to 200</h1>
+          <div id="entities_tag_cloud" class="charts-section"></div>
+          <p class="card-text m-4">
+            This graph shows the entities that are trending in the articles. The entities are Limited to 200.
+            And are shown in a tag cloud format. The biggest entities are the ones that are mentioned the most.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 {% endblock %}

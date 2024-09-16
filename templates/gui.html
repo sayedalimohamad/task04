@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}GUI Page{% endblock %} {% block
+{% extends "base.html" %} {% block title %}Analysis{% endblock %} {% block
 content %}
 <!-- Aside on the left -->
 <aside class="aside">
@@ -66,6 +66,7 @@ content %}
     <a class="nav-link" aria-current="page" href="advanced.html">
       <i class="fa-solid fa-flask-vial"></i> Advanced Analysis</a
     >
+    <a href="{{ url_for('logout') }}" class="btn btn-md btn-dark logout-button"><i class="fa-solid fa-right-from-bracket"></i> Log out</a>
   </nav>
 </aside>
 

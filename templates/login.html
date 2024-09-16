@@ -1,0 +1,75 @@
+{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
+%}
+<aside class="aside"></aside>
+
+<div class="text-center mt-5">
+  <img src="https://static.vecteezy.com/system/resources/previews/017/639/144/original/account-has-been-registered-login-success-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg"
+    style="width: 300px; border-radius: 50%;" alt="image">
+    <h2 class="text-center my-4 " style="font-size: 3em;">Admin Login</h2>
+    <h6 class="text-center my-4 ">Enter username and password to login, and have access to the analysis</h6>
+</div>
+
+
+<div class="container d-flex justify-content-center">
+  <form
+    method="POST"
+    action="{{ url_for('login') }}"
+    class="w-50 p-4 shadow-lg rounded"
+  >
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        class="form-control"
+        placeholder="Enter username"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="form-control"
+        placeholder="Enter password"
+        required
+      />
+    </div>
+
+    <!-- Submit Button -->
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary btn-block btn-md"><i class="fa-solid fa-user"></i> Login</button>
+    </div>
+  </form>
+</div>
+
+{% with messages = get_flashed_messages() %} {% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %}
+</div>
+
+{% endif %} {% endwith %}
+
+<script>
+  document.querySelector("aside.aside").style.display = "none";
+  document.querySelector("body").style.marginLeft = "0";
+  document.addEventListener("DOMContentLoaded", function() {
+        var footer = document.querySelector("footer");
+        footer.style.display = "none";
+    });
+</script>
+{% endblock %}

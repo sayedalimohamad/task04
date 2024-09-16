@@ -24,6 +24,10 @@ aside {
   background-color: #3d3d3d;
   overflow-x: hidden;
 }
+.logout-button {
+  margin-top: auto; /* Pushes the button to the bottom */
+  margin-top: 20px;
+}
 
 .nav-link {
   color: white;
