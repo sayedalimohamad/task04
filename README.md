@@ -2,6 +2,20 @@
 
 This code is a Flask web application that interacts with a MongoDB database to provide various endpoints for querying and analyzing articles. Here's a breakdown of the key components and routes:
 
+## Background Information: Refreshing Reminder
+
+- `Task01` : Week 01 - Web Scraping with Python 
+    - Repository  : ```https://github.com/sayedalimohamad/task01.git```
+    - README File : https://github.com/sayedalimohamad/task01/blob/main/README.md
+
+- `Task02` : Week 02 - Data Storage in MongoDB and Flask API Development
+    - Repository  : https://github.com/sayedalimohamad/task02.git
+    - README File : https://github.com/sayedalimohamad/task02/blob/main/README.md
+
+- `Task03` : Week 03 - Data Visualization using amCharts
+    - Repository  : https://github.com/sayedalimohamad/task03.git
+    - README File : https://github.com/sayedalimohamad/task03/blob/main/README.md
+
 ## Imports and Initialization
 
 - `Flask`, `jsonify`, `request`, `Response`, `render_template`, `redirect`, `url_for`, and `flash` are imported from `flask`.
