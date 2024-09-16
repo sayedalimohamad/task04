@@ -203,5 +203,34 @@ The script prints the results of the analysis to the console.
 
 ---
 # The Image
+
 ## Login Page
-![Admin should enter username and password to access the page.](/README%20Images/127.0.0.1_5000_login(HD%20Screen%20-%20MSA).png)
+Admin should enter username and password to access the page.
+![Login Page](/README%20Images/127.0.0.1_5000_login(HD%20Screen%20-%20MSA).png)
+
+## Home Page
+The Home Page with aside navbar. And all route endpoint.
+![Home Page](/README%20Images/127.0.0.1_5000_(HD%20Screen%20-%20MSA).png)
+
+## Analysis Page
+Those images show some of analysis and the update of aside navbar.
+![Analysis Page](/README%20Images/127.0.0.1_5000_gui.html(HD%20Screen%20-%20MSA).png)
+![Analysis Page](/README%20Images/127.0.0.1_5000_gui.html(HD%20Screen%20-%20MSA)%20(1).png)
+![Analysis Page](/README%20Images/127.0.0.1_5000_gui.html(HD%20Screen%20-%20MSA)%20(2).png)
+![Analysis Page](/README%20Images/127.0.0.1_5000_gui.html(HD%20Screen%20-%20MSA)%20(3).png)
+
+## Advanced Analysis Page
+Those images show some of advanced analysis and the update of aside navbar.
+
+![Advanced Analysis Page](/README%20Images/127.0.0.1_5000_advanced.html(HD%20Screen%20-%20MSA).png)
+Average Texts Sentiment by Date.
+    Because on a specific day, there are numerous articles, and it is impossible to display them all one above the other, this graph shows the average sentiment score for each day.
+
+![Advanced Analysis Page](/README%20Images/127.0.0.1_5000_advanced.html(HD%20Screen%20-%20MSA)%20(1).png)
+Entities by Trending - Top 10
+    This graph shows the entities that are trending in the articles. The entities are the people, places, and things that are mentioned in the articles. Each entity is assigned a score based on how many times it is mentioned in the articles, and it has a checkbox to it from the graph.
+
+![Advanced Analysis Page](/README%20Images/127.0.0.1_5000_advanced.html(HD%20Screen%20-%20MSA)%20(2).png)
+Entities Tag Cloud - Limited to 200
+    This graph shows the entities that are trending in the articles. The entities are Limited to 200. And are shown in a tag cloud format. The biggest entities are the ones that are mentioned the most.
+
