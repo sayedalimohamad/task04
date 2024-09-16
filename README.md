@@ -4,17 +4,35 @@ This code is a Flask web application that interacts with a MongoDB database to p
 
 ## Background Information: Refreshing Reminder
 
-- `Task01` : Week 01 - Web Scraping with Python 
-    - Repository  : ```https://github.com/sayedalimohamad/task01.git```
-    - README File : https://github.com/sayedalimohamad/task01/blob/main/README.md
+1. `Task01` : Week 01 - Web Scraping with Python 
+    1. README File 
+    ```sh
+     https://github.com/sayedalimohamad/task01/blob/main/README.md
+     ```
+    2. Repository 
+    ```sh 
+    https://github.com/sayedalimohamad/task01.git
+    ```
 
-- `Task02` : Week 02 - Data Storage in MongoDB and Flask API Development
-    - Repository  : https://github.com/sayedalimohamad/task02.git
-    - README File : https://github.com/sayedalimohamad/task02/blob/main/README.md
+2. `Task02` : Week 02 - Data Storage in MongoDB and Flask API Development
+    1. README File 
+    ```sh
+     https://github.com/sayedalimohamad/task02/blob/main/README.md
+     ```
+    2. Repository 
+    ```sh 
+    https://github.com/sayedalimohamad/task02.git
+    ```
 
-- `Task03` : Week 03 - Data Visualization using amCharts
-    - Repository  : https://github.com/sayedalimohamad/task03.git
-    - README File : https://github.com/sayedalimohamad/task03/blob/main/README.md
+3. `Task03` : Week 03 - Data Visualization using amCharts
+    1. README File 
+    ```sh
+     https://github.com/sayedalimohamad/task03/blob/main/README.md
+     ```
+    2. Repository 
+    ```sh 
+    https://github.com/sayedalimohamad/task03.git
+    ```
 
 ## Imports and Initialization
 
