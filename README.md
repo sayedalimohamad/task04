@@ -2,6 +2,8 @@
 
 This code is a Flask web application that interacts with a MongoDB database to provide various endpoints for querying and analyzing articles. Here's a breakdown of the key components and routes:
 
+#### `*📌 Remarque*`: At the end of this file, you will find several image snippets showcasing the project.
+
 ## Background Information: Refreshing Reminder
 
 1. `Task01` : Week 01 - Web Scraping with Python 
@@ -199,3 +201,7 @@ The script prints the results of the analysis to the console.
 
 ``` The JSON database backup is divided into 28 chunk files of 1000 each. Use 'mergeJSONfile.py' to rejoin them and `data_storage.py` to connect to MongoDB. Be sure to review the restrictions in the `000_Notice.md` file located in the data directory. ```
 
+---
+# The Image
+## Login Page
+![Admin should enter username and password to access the page.](../127.0.0.1_5000_login(HD%20Screen%20-%20MSA).png)
