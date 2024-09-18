@@ -1,3 +1,7 @@
+
+[![Watch the video](https://img.youtube.com/vi/OcNPVfINXtU/maxresdefault.jpg)](https://youtu.be/OcNPVfINXtU)
+
+
 # Flask Web Application with MongoDB AND `Authentication`
 
 This code is a Flask web application that interacts with a MongoDB database to provide various endpoints for querying and analyzing articles. Here's a breakdown of the key components and routes:
