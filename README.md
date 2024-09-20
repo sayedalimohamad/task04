@@ -128,9 +128,9 @@ This code is a Flask web application that interacts with a MongoDB database to p
 
 This application provides a comprehensive set of endpoints for querying and analyzing articles stored in a MongoDB database, with a focus on various attributes such as keywords, authors, dates, word counts, languages, and sentiment analysis.
 
-## app_analyze.py
+## advanced_data_analysis.py
 
-`app_analyze.py` is a Python script designed to analyze text documents stored in a MongoDB collection. It performs sentiment analysis and named entity recognition (NER) on the text data and updates the documents with the analysis results.
+`advanced_data_analysis.py` is a Python script designed to analyze text documents stored in a MongoDB collection. It performs sentiment analysis and named entity recognition (NER) on the text data and updates the documents with the analysis results.
 
 ### Features
 
